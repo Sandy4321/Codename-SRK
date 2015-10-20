@@ -1,0 +1,25 @@
+library("twitteR")
+library("ROAuth")
+library("RCurl")
+library("httr")
+download.file(url="http://curl.haxx.se/ca/cacert.pem",destfile="cacert.pem")
+ck <- '4QPOQJoiBgoGP7jU13Akxfp2E'
+cs <- 'ued02VUpial3K8NW8foectZj1UFtsEfQetQJbYXD21uCj0ohJc'
+ak <- '136316586-85X26GXeCeyq5m5TkH2KTA4yZuA2xMvYUNIroOGS'
+as <- 'GuBlzBZQTVlqg5kTSBNE7lgubgpGX7BZZbOkz54BcTAvV'
+reqURL<- 'https://api.twitter.com/oauth/request_token'
+acURL <- 'https://api.twitter.com/oauth/access_token'
+auURL <- 'https://api.twitter.com/oauth/authorize'
+cred <- OAuthFactory$new(consumerKey=ck,consumerSecret=cs,requestURL=reqURL,accessURL=acURL,authURL=auURL)
+cred$handshake(cainfo="cacert.pem")
+save(cred, file="twitter_authentication.Rdata")
+load("twitter_authentication.Rdata")
+oauth_endpoints("twitter")
+myapp <- oauth_app("twitter",key=ck,secret=cs)
+twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
+setup_twitter_oauth(ck,cs)
+search.string <- "#Bahubali"
+no.of.tweets <- 10
+tweets <- searchTwitter(search.string, n=no.of.tweets, lang="en")
+tweets
+write.csv(tweets, file='/home/horopter/tweet/CSVTweets.csv', row.names=F)
